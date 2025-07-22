@@ -6,7 +6,6 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 import numpy as np
 from pydantic import BaseModel
-from fastapi.middleware.cors import CORSMiddleware
 
 from game_analysis import compute_transition_data, create_state_action_lists
 
@@ -28,7 +27,6 @@ def initialize_app():
     return app
 
 app = initialize_app()
-app.add_middleware(CORSMiddleware, allow_origins=['*'], allow_methods=['*'], allow_headers=['*'])
 
 app.mount("/assets", StaticFiles(directory="dice-ui/dist/assets"), name="assets")
 

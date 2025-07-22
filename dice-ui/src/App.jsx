@@ -6,7 +6,7 @@ const DiceGame = () => {
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [showManualEntry, setShowManualEntry] = useState(false);
   const [score, setScore] = useState(0);
-  const [triplets, setTriplets] = useState([]);
+  const [triplet, setTriplet] = useState(-1);
   const [currentThrow, setCurrentThrow] = useState([null, null, null, null, null, null]);
   const [numDice, setNumDice] = useState(6);
   const [possibleMoves, setPossibleMoves] = useState([]);
@@ -66,7 +66,6 @@ const DiceGame = () => {
   };
 
   const getMockMoves = async () => {
-    let triplet = triplets.length == 0 ? -1 : triplets[0]
     let game_state = {
       score: score,
       triplet: triplet,
@@ -135,7 +134,7 @@ const DiceGame = () => {
     setShowAnalysis(true);
 
     setLastState({
-      currentThrow, possibleMoves, numDice, triplets, score
+      currentThrow, possibleMoves, numDice, triplet, score
     });
 
     setTimeout(() => {
@@ -143,14 +142,29 @@ const DiceGame = () => {
       let newNumDice = 6;
       if (move.type === 'cashIn') {
         setScore(prev => 0);
-        setTriplets([])
+        setTriplet(-1);
       } else if (move.type === 'forfeit') {
         setScore(prev => 0);
-        setTriplets([])
+        setTriplet(-1);
       } else if (move.type === 'select') {
         setScore(prev => prev + move.immediateScore);
-        setTriplets(prev => [...prev, ...move.dice.filter((v, i, a) => a.indexOf(v) === i && a.lastIndexOf(v) !== i)]);
-        newNumDice = numDice==move.dice.length ? 6 : numDice-move.dice.length;
+        let counts = [0, 0, 0, 0, 0, 0]
+        move.dice.forEach(v => counts[v-1] += 1);
+        console.log('Counts');
+        console.log(counts);
+
+        let max_idx = counts.indexOf(Math.max(...counts));
+        if (numDice==move.dice.length) {
+          newNumDice = 6;
+          setTriplet(-1);
+        } else {
+          newNumDice = numDice - move.dice.length;
+          if (counts[max_idx] >= 3) {
+            setTriplet(max_idx+1);
+            console.log(`Setting triplet to ${max_idx+1}`);
+          }
+
+        }
       }
 
       // Reset for next turn
@@ -175,7 +189,7 @@ const DiceGame = () => {
       onClick={() => {
         setNumDice(lastState.numDice);
         setScore(lastState.score);
-        setTriplets(lastState.triplets);
+        setTriplet(lastState.triplet);
         setCurrentThrow(lastState.currentThrow);
         setPossibleMoves(lastState.possibleMoves);
         setLastState(null);
@@ -188,7 +202,7 @@ const DiceGame = () => {
 
   const resetGame = (currentThrow, selectedDice) => {
     setScore(0);
-    setTriplets([]);
+    setTriplet([]);
     setCurrentThrow([null, null, null, null, null, null]);
     setSelectedDice([false, false, false, false, false, false]);
     setNumDice(6);
@@ -335,19 +349,17 @@ const DiceGame = () => {
             </div>
 
             {/* Triplets */}
-            {triplets.length > 0 && (
+            {triplet > 0 && (
               <div className="mb-6">
-                <div className="text-sm text-gray-600 mb-3 text-center">Triplets</div>
+                <div className="text-sm text-gray-600 mb-3 text-center">Triplet</div>
                 <div className="flex justify-center gap-4">
-                  {triplets.map((triplet, index) => (
-                    <div key={index} className="flex gap-1">
+                    <div  className="flex gap-1">
                       {[1, 2, 3].map(i => (
                         <div key={i} className="p-1 border-gray-300 rounded w-8 h-8">
                           {React.createElement(diceComponents[triplet], { className: "w-8 h-8 text-blue-600" })}
                         </div>
                       ))}
                     </div>
-                  ))}
                 </div>
               </div>
             )}

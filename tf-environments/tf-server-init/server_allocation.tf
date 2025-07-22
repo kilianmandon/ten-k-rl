@@ -15,15 +15,15 @@ provider "hcloud" {
     token = var.hcloud_token
 }
 
-resource "hcloud_server" "mc_server" {
+resource "hcloud_server" "game_server" {
     name = "mc-server"
-    server_type = "ccx33"
+    server_type = "cpx21"
     image = "ubuntu-24.04"
     location = "fsn1"
     ssh_keys = ["100417185"]
-    user_data = file("cloud-init.sh")
+    // user_data = file("cloud-init.sh")
 }
 
 output "instance_ips" {
-    value = hcloud_server.mc_server.ipv4_address
+    value = hcloud_server.game_server.ipv4_address
 }

@@ -77,7 +77,7 @@ def calculate_gain(state, picked_vals, ignore_leftover=False):
 
     for twoset_inds in itertools.combinations([1, 2, 3, 4, 5, 6], 3):
         vals = tuple(2 if a in twoset_inds else 0 for a in [1, 2, 3, 4, 5, 6])
-        if picked_vals == vals:
+        if tuple(dice_counts[1:]) == vals:
             return 500, 0, -1
 
 
