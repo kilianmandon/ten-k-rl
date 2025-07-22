@@ -176,7 +176,7 @@ def gather(arr, idx_start, n_slice):
     gather_inds = np.flatten()
 
 def value_iteration():
-    device = 'cpu'
+    device = 'cuda:0'
     num_points = 10000 // 50
 
     n_actions = len(action_list)
@@ -241,7 +241,7 @@ def value_iteration():
         print(f'Average case: {np.sum(init_dist * state_values[:n_base_states].to(device="cpu").numpy())}')
         
 
-    for i in range(50):
+    for i in range(30):
         step_parallel()
 
     np.save('resources/state_values.npy', state_values.to(device='cpu').numpy())
@@ -385,8 +385,8 @@ def simulate():
 
             full_state_idx = state_idx + (score // 50 * n_states)
             full_state_idx = np.clip(full_state_idx, 0, n_full_states-1)
-            # opt = np.argmax(state_action_values[full_state_idx])
-            opt = basic_policy(state_idx, score, pseudo_state_action_table, state_action_values[full_state_idx])
+            opt = np.argmax(state_action_values[full_state_idx])
+            # opt = basic_policy(state_idx, score, pseudo_state_action_table, state_action_values[full_state_idx])
 
             if not silent:
                 for i, action_idx in enumerate(valid_actions):
@@ -446,14 +446,7 @@ def simulate():
 
         
 def main():
-    # value_iteration()
     simulate()
-
-    state_idx = [n.data==(4,5,5,5) for n in state_list].index(True)
-    action_idx = [n.pick_inds==(1, 2, 3) for n in action_list].index(True)
-    gain = calculate_gain(state_list[state_idx], (5,5,5))[0]
-    print(gain)
-    ...
 
 if __name__=='__main__':
     main()
