@@ -1,0 +1,14 @@
+name: tenthousand-env
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - nodejs  # installs node and npm
+  - pip
+  - pip:
+      - "fastapi[standard]"
+      - numpy
+      - pydantic
+      - anytree
+      - torch
+      - tqdm
