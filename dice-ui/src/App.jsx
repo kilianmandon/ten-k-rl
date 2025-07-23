@@ -108,7 +108,7 @@ const DiceGame = () => {
     } else {
       setPossibleMoves([]);
     }
-  }, [currentThrow, numDice]);
+  }, [currentThrow, numDice, triplet]);
 
   const getButtonColor = (move) => {
     if (!showAnalysis) return 'border-gray-300 hover:bg-gray-100';
