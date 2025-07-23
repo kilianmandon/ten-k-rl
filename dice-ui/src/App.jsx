@@ -202,7 +202,7 @@ const DiceGame = () => {
 
   const resetGame = (currentThrow, selectedDice) => {
     setScore(0);
-    setTriplet([]);
+    setTriplet(-1);
     setCurrentThrow([null, null, null, null, null, null]);
     setSelectedDice([false, false, false, false, false, false]);
     setNumDice(6);
