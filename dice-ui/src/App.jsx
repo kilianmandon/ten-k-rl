@@ -50,14 +50,14 @@ const DiceGame = () => {
   };
 
   const randomThrow = (numDice) => {
-      const newThrow = [...currentThrow];
-      for (let i = 0; i < numDice; i++) {
-        newThrow[i] = Math.floor(Math.random() * 6) + 1;
-      }
-      for (let i = numDice; i < 6; i++) {
-        newThrow[i] = null;
-      }
-      setCurrentThrow(newThrow);
+    const newThrow = [...currentThrow];
+    for (let i = 0; i < numDice; i++) {
+      newThrow[i] = Math.floor(Math.random() * 6) + 1;
+    }
+    for (let i = numDice; i < 6; i++) {
+      newThrow[i] = null;
+    }
+    setCurrentThrow(newThrow);
   };
 
   const isThrowComplete = () => {
@@ -72,7 +72,7 @@ const DiceGame = () => {
       dice: currentThrow.filter(d => d != null)
     }
     const res = await fetch("/move_overview", {
-    // const res = await fetch("http://localhost:8000/move_overview", {
+      // const res = await fetch("http://localhost:8000/move_overview", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -83,7 +83,7 @@ const DiceGame = () => {
     return data.moves;
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     const newThrow = [...currentThrow];
     for (let i = numDice; i < 6; i++) {
       newThrow[i] = null;
@@ -131,6 +131,7 @@ const DiceGame = () => {
   const selectMove = (move, index) => {
     setSelectedMove(index);
     let analysis = showAnalysis;
+    let timeout = analysis ? 0 : 1500;
     setShowAnalysis(true);
 
     setLastState({
@@ -149,19 +150,19 @@ const DiceGame = () => {
       } else if (move.type === 'select') {
         setScore(prev => prev + move.immediateScore);
         let counts = [0, 0, 0, 0, 0, 0]
-        move.dice.forEach(v => counts[v-1] += 1);
+        move.dice.forEach(v => counts[v - 1] += 1);
         console.log('Counts');
         console.log(counts);
 
         let max_idx = counts.indexOf(Math.max(...counts));
-        if (numDice==move.dice.length) {
+        if (numDice == move.dice.length) {
           newNumDice = 6;
           setTriplet(-1);
         } else {
           newNumDice = numDice - move.dice.length;
           if (counts[max_idx] >= 3) {
-            setTriplet(max_idx+1);
-            console.log(`Setting triplet to ${max_idx+1}`);
+            setTriplet(max_idx + 1);
+            console.log(`Setting triplet to ${max_idx + 1}`);
           }
 
         }
@@ -181,7 +182,7 @@ const DiceGame = () => {
 
       // Scroll to top
       // window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 1000);
+    }, timeout);
   };
 
   const undoButton = () => {
@@ -241,8 +242,7 @@ const DiceGame = () => {
       return <button
         key={`cashIn-${index}`}
         onClick={() => selectMove(move, `cashIn-${index}`)}
-        className={`w-full p-4 border-2 rounded-lg flex items-center justify-between transition-all ${selectedMove === `cashIn-${index}` ? 'bg-blue-200 border-blue-500' : getButtonColor(move)
-          }  ${!showAnalysis ? 'justify-center' : ''}`}
+        className={`w-full p-4 border-2 rounded-lg flex items-center justify-between transition-all ${getButtonColor(move)}  ${!showAnalysis ? 'justify-center' : ''}`}
       >
         <div className="flex items-center gap-3">
           <DollarSign className="w-5 h-5 text-green-600" />
@@ -321,14 +321,14 @@ const DiceGame = () => {
           </div>
 
           <div className="flex justify-between">
-          <button
-            onClick={resetGame}
-            className="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg text-sm text-gray-600 hover:bg-gray-200 transition-colors"
-          >
-            <RotateCcw className="w-4 h-4" />
-            Reset Game
-          </button>
-          <button
+            <button
+              onClick={resetGame}
+              className="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg text-sm text-gray-600 hover:bg-gray-200 transition-colors"
+            >
+              <RotateCcw className="w-4 h-4" />
+              Reset Game
+            </button>
+            <button
               onClick={() => setShowManualEntry(!showManualEntry)}
               className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${showManualEntry
                 ? 'bg-blue-100 text-blue-700'
@@ -337,7 +337,7 @@ const DiceGame = () => {
             >
               Random {!showManualEntry ? 'ON' : 'OFF'}
             </button>
-            </div>
+          </div>
         </div>
 
         {/* Game State */}
@@ -353,13 +353,13 @@ const DiceGame = () => {
               <div className="mb-6">
                 <div className="text-sm text-gray-600 mb-3 text-center">Triplet</div>
                 <div className="flex justify-center gap-4">
-                    <div  className="flex gap-1">
-                      {[1, 2, 3].map(i => (
-                        <div key={i} className="p-1 border-gray-300 rounded w-8 h-8">
-                          {React.createElement(diceComponents[triplet], { className: "w-8 h-8 text-blue-600" })}
-                        </div>
-                      ))}
-                    </div>
+                  <div className="flex gap-1">
+                    {[1, 2, 3].map(i => (
+                      <div key={i} className="p-1 border-gray-300 rounded w-8 h-8">
+                        {React.createElement(diceComponents[triplet], { className: "w-8 h-8 text-blue-600" })}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
@@ -391,129 +391,126 @@ const DiceGame = () => {
               >
                 Clear
               </button>
-              
 
 
-            {/* Current Throw */}
-            <div className="mb-6 flex items-center flex-col">
-              <div className="text-sm text-gray-600 mb-3 text-center">
-                Throw ({numDice} dice)
+
+              {/* Current Throw */}
+              <div className="mb-6 flex items-center flex-col">
+                <div className="text-sm text-gray-600 mb-3 text-center">
+                  Throw ({numDice} dice)
+                </div>
+                <div className="flex flex-wrap justify-center gap-2 mb-4"
+                  style={{ width: 'max-content', maxWidth: 'calc(3 * 4rem + 2 * 0.5rem)' }}>
+                  {currentThrow.slice(0, numDice).map((dice, index) => (
+                    <button
+                      key={index}
+                      onClick={() => dice && toggleDiceAt(index)}
+                      className={`w-16 h-16 border-2 border-dashed rounded-lg flex items-center justify-center transition-all ${dice
+                        ? 'border-blue-300 bg-blue-50 hover:bg-blue-100'
+                        : 'border-gray-300 bg-gray-50'
+                        } ${selectedDice[index] ? 'border-solid border-green-300' : ''}`}
+                    >
+                      {dice ? getDiceComponent(dice) : <div className="w-3 h-3 bg-gray-300 rounded-full" />}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className="flex flex-wrap justify-center gap-2 mb-4"
-                style={{ width: 'max-content', maxWidth: 'calc(3 * 4rem + 2 * 0.5rem)' }}>
-                {currentThrow.slice(0, numDice).map((dice, index) => (
-                  <button
-                    key={index}
-                    onClick={() => dice && toggleDiceAt(index)}
-                    className={`w-16 h-16 border-2 border-dashed rounded-lg flex items-center justify-center transition-all ${dice
-                      ? 'border-blue-300 bg-blue-50 hover:bg-blue-100'
-                      : 'border-gray-300 bg-gray-50'
-                      } ${selectedDice[index] ? 'border-solid border-green-300' : ''}`}
-                  >
-                    {dice ? getDiceComponent(dice) : <div className="w-3 h-3 bg-gray-300 rounded-full" />}
-                  </button>
-                ))}
-              </div>
-            </div>
             </div>
 
             <div className="space-y-3">
-            {possibleMoves.length > 0 &&
+              {possibleMoves.length > 0 &&
                 renderMoveAccepting(currentThrow, selectedDice)
 
               }
               {lastState != null && undoButton()}
+            </div>
+
+          </div>
+        </div>
+
+        {/* Moves Area */}
+        {(isLoadingMoves || possibleMoves.length > 0) && (
+          <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+            <div className="text-lg font-semibold text-gray-800 mb-4 text-center">
+              Possible Moves
+            </div>
+
+            {isLoadingMoves ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader className="w-8 h-8 animate-spin text-blue-500" />
+                <span className="ml-3 text-gray-600">Loading moves...</span>
               </div>
-            
-          </div>
-        </div>
-      </div>
-
-      {/* Moves Area */}
-      {(isLoadingMoves || possibleMoves.length > 0) && (
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
-          <div className="text-lg font-semibold text-gray-800 mb-4 text-center">
-            Possible Moves
-          </div>
-
-          {isLoadingMoves ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader className="w-8 h-8 animate-spin text-blue-500" />
-              <span className="ml-3 text-gray-600">Loading moves...</span>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {/* Cash In - Always at top */}
-              {possibleMoves.filter(m => m.type === 'cashIn').map((move, index) => (
-                <button
-                  key={`cashIn-${index}`}
-                  onClick={() => selectMove(move, `cashIn-${index}`)}
-                  className={`w-full p-4 border-2 rounded-lg flex items-center justify-between transition-all ${selectedMove === `cashIn-${index}` ? 'bg-blue-200 border-blue-500' : getButtonColor(move)
-                    }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <DollarSign className="w-5 h-5 text-green-600" />
-                    <span className="font-medium">{move.label}</span>
-                  </div>
-                  {showAnalysis && (
-                    <span className="text-sm text-gray-600">
-                      Expected: {Math.round(move.expectedScore)}
-                    </span>
-                  )}
-                </button>
-              ))}
-
-              {/* Select moves */}
-              {possibleMoves.filter(m => m.type === 'select').map((move, index) => (
-                <button
-                  key={`select-${index}`}
-                  onClick={() => selectMove(move, `select-${index}`)}
-                  className={`w-full p-4 border-2 rounded-lg flex items-center justify-between transition-all ${selectedMove === `select-${index}` ? 'bg-blue-200 border-blue-500' : getButtonColor(move)
-                    }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex gap-1">
-                      {move.dice.map((dice, diceIndex) => (
-                        <div key={diceIndex} className="flex items-center justify-center">
-                          <div className="w-8 h-8 flex items-center justify-center">
-                            {React.createElement(diceComponents[dice], { className: "w-8 h-8 text-blue-600" })}
-                          </div>
-                        </div>
-                      ))}
+            ) : (
+              <div className="space-y-3">
+                {/* Cash In - Always at top */}
+                {possibleMoves.filter(m => m.type === 'cashIn').map((move, index) => (
+                  <button
+                    key={`cashIn-${index}`}
+                    onClick={() => selectMove(move, `cashIn-${index}`)}
+                    className={`w-full p-4 border-2 rounded-lg flex items-center justify-between transition-all ${getButtonColor(move)}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <DollarSign className="w-5 h-5 text-green-600" />
+                      <span className="font-medium">{move.label}</span>
                     </div>
-                    <span className="font-medium">{move.label}</span>
-                  </div>
-                  {showAnalysis && (
-                    <span className="text-sm text-gray-600">
-                      Expected: {Math.round(move.expectedScore)}
-                    </span>
-                  )}
-                </button>
-              ))}
+                    {showAnalysis && (
+                      <span className="text-sm text-gray-600">
+                        Expected: {Math.round(move.expectedScore)}
+                      </span>
+                    )}
+                  </button>
+                ))}
 
-              {/* Forfeit - Always at bottom */}
-              {possibleMoves.filter(m => m.type === 'forfeit').map((move, index) => (
-                <button
-                  key={`forfeit-${index}`}
-                  onClick={() => selectMove(move, `forfeit-${index}`)}
-                  className={`w-full p-4 border-2 rounded-lg flex items-center justify-between transition-all ${selectedMove === `forfeit-${index}` ? 'bg-blue-200 border-blue-500' : getButtonColor(move)
-                    }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <X className="w-5 h-5 text-red-600" />
-                    <span className="font-medium">{move.label}</span>
-                  </div>
-                  {showAnalysis && (
-                    <span className="text-sm text-gray-600">
-                      Expected: {Math.round(move.expectedScore)}
-                    </span>
-                  )}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+                {/* Select moves */}
+                {possibleMoves.filter(m => m.type === 'select').map((move, index) => (
+                  <button
+                    key={`select-${index}`}
+                    onClick={() => selectMove(move, `select-${index}`)}
+                    className={`w-full p-4 border-2 rounded-lg flex items-center justify-between transition-all ${getButtonColor(move)}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex gap-1">
+                        {move.dice.map((dice, diceIndex) => (
+                          <div key={diceIndex} className="flex items-center justify-center">
+                            <div className="w-8 h-8 flex items-center justify-center">
+                              {React.createElement(diceComponents[dice], { className: "w-8 h-8 text-blue-600" })}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <span className="font-medium">{move.label}</span>
+                    </div>
+                    {showAnalysis && (
+                      <span className="text-sm text-gray-600">
+                        Expected: {Math.round(move.expectedScore)}
+                      </span>
+                    )}
+                  </button>
+                ))}
+
+                {/* Forfeit - Always at bottom */}
+                {possibleMoves.filter(m => m.type === 'forfeit').map((move, index) => (
+                  <button
+                    key={`forfeit-${index}`}
+                    onClick={() => selectMove(move, `forfeit-${index}`)}
+                    className={`w-full p-4 border-2 rounded-lg flex items-center justify-between transition-all ${getButtonColor(move)}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <X className="w-5 h-5 text-red-600" />
+                      <span className="font-medium">{move.label}</span>
+                    </div>
+                    {showAnalysis && (
+                      <span className="text-sm text-gray-600">
+                        Expected: {Math.round(move.expectedScore)}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
